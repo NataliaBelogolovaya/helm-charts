@@ -1,0 +1,96 @@
+replicaCount: 1
+namespace: my-jenkins
+name: my-jenkins
+
+image:
+  repository: jfrog.it-academy.by/public/jenkins-ci
+  pullPolicy: IfNotPresent
+  tag: "nmyslivets"
+  
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  hport: 8080
+  jport: 50000
+
+ingress:
+  enabled: false
+  className: "ingress-jenkins"
+  inghost: jenkins.k8s-13.sa
+   
+  tls: []
+  
+env:
+  value1: "-Djenkins.install.runSetupWizard=false"
+  name: CASC_JENKINS_CONFIG
+  value2: /var/jenkins_home/casc_configs/jenkins.yaml 
+
+resources: 
+  requests:
+    cpu: 2
+    memory: 2Gi
+  limits:
+    cpu: 3
+    memory: 3Gi
+  
+
+#livenessProbe:
+  #httpGet:
+  # path: /
+  # port: http
+#readinessProbe:
+ # httpGet:
+  #  path: /
+   # port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+configMap:
+  basic_name: my-basic-config
+  jenkins_name: my-jenkins-config
+
+JenkinsAuthConfig: "/var/jenkins_home/init.groovy.d/basic-security.groovy"
+JACsubPath: "basic-security.groovy"
+JenkinsConfigYaml: "/var/jenkins_home/casc_configs/jenkins.yaml"
+JCYsubPath: "jenkins.yaml"
+JenkinsConfig: "/var/jenkins_home"
+
+nfs:
+  server: 192.168.37.105
+  path: "/mnt/IT-Academy/nfs-data/sa2-27-24/nmyslivets/jenkins"  
+  readOnly: false
+  vers: 3
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
