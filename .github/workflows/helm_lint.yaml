@@ -1,0 +1,29 @@
+name: helm-lint
+on: [ workflow_dispatch ]
+jobs:
+  release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v3        
+
+      - name: Configure Git
+        run: |        
+          git config user.name "nataliabelogolovaya"
+          git config user.email "belogolovayanv@gmail.com"
+     
+      - name: Install Helm
+        uses: azure/setup-helm@v3     
+      
+      - name: check helm lint
+        id: list-check      
+        run : |
+            result=$(helm lint jenkins/jenkins | grep "0 chart(s) failed" | echo "0")
+            echo $result > "$GITHUB_OUTPUT" 
+        
+      - name: Run chart-testing (lint)
+        if: steps.list-check.outputs.result != '0'
+        run: exit 1
