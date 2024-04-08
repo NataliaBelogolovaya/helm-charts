@@ -18,12 +18,8 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v3     
       
-      - name: check helm lint
-        id: list-check      
-        run : |
-            result=$(helm lint jenkins/jenkins | grep "0 chart(s) failed" | echo "0")
-            echo $result > "$GITHUB_OUTPUT" 
-        
-      - name: Run chart-testing (lint)
-        if: steps.list-check.outputs.result != '0'
-        run: exit 1
+      - name: helm-check
+        uses: igabaydulin/helm-check-action@0.1.4
+        env:
+          CHART_LOCATION: ./jenkins/jenkins/
+          CHART_VALUES: ./jenkins/jenkins/values.yaml   
